@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Sistem Manajemen Stok - Gudang & Barang Datang</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="title-section">
+            <h1><i class="fas fa-boxes"></i> Sirkulasi Stok</h1>
+            <p>Catatan barang datang → masuk gudang | Kelola In-Out stok gudang</p>
+        </div>
+        <div class="stats-badge">
+            <i class="fas fa-cubes"></i> Total item: <span id="totalItemsCount">0</span>
+            <i class="fas fa-chart-line" style="margin-left: 15px;"></i> Total unit: <span id="totalUnitCount">0</span>
+        </div>
+    </div>
+
+    <!-- TABS: Form Barang Datang / Form In-Out -->
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="tab-datang">
+            <i class="fas fa-truck"></i> Barang Datang
+        </button>
+        <button class="tab-btn" data-tab="tab-inout">
+            <i class="fas fa-exchange-alt"></i> In / Out Stok
+        </button>
+        <button class="tab-btn" data-tab="tab-history">
+            <i class="fas fa-history"></i> Riwayat Transaksi
+        </button>
+    </div>
+
+    <!-- TAB 1: Form Barang Datang -->
+    <div id="tab-datang" class="tab-content active">
+        <div class="card">
+            <h3><i class="fas fa-truck-loading"></i> 📦 Barang Datang (Daftar Kedatangan)</h3>
+            <div class="form-grid">
+                <div class="input-group">
+                    <label><i class="fas fa-tag"></i> Nama Barang *</label>
+                    <input type="text" id="namaBarang" placeholder="Contoh: Kabel HDMI">
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-hashtag"></i> Kode / SKU</label>
+                    <input type="text" id="kodeBarang" placeholder="Opsional">
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-weight-hanging"></i> Jumlah *</label>
+                    <input type="number" id="jumlahBarang" value="1" min="1">
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-store"></i> Supplier</label>
+                    <input type="text" id="asalBarang" placeholder="Supplier">
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-calendar-day"></i> Tanggal Datang</label>
+                    <input type="date" id="tanggalDatang">
+                </div>
+                <div class="input-group">
+                    <label>&nbsp;</label>
+                    <button class="btn btn-primary" id="btnTambahDatang"><i class="fas fa-plus-circle"></i> Catat Barang Datang</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 2: Form In / Out Stok (Hanya untuk barang yang sudah di gudang) -->
+    <div id="tab-inout" class="tab-content">
+        <div class="card">
+            <h3><i class="fas fa-exchange-alt"></i> 📊 Tambah / Kurangi Stok Gudang</h3>
+            <div class="form-grid">
+                <div class="input-group">
+                    <label><i class="fas fa-box"></i> Pilih Barang</label>
+                    <select id="selectBarangInOut">
+                        <option value="">-- Pilih barang di gudang --</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-info-circle"></i> Stok Saat Ini</label>
+                    <input type="text" id="currentStock" readonly style="background:#f1f5f9;">
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-plus-circle" style="color:#15803d;"></i> Jumlah Masuk (In)</label>
+                    <input type="number" id="jumlahMasuk" value="0" min="0" placeholder="Tambah stok">
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-minus-circle" style="color:#b91c1c;"></i> Jumlah Keluar (Out)</label>
+                    <input type="number" id="jumlahKeluar" value="0" min="0" placeholder="Kurangi stok">
+                </div>
+                <div class="input-group">
+                    <label><i class="fas fa-note-sticky"></i> Keterangan</label>
+                    <input type="text" id="keteranganInOut" placeholder="Contoh: Penjualan, Rusak, Restock">
+                </div>
+                <div class="input-group">
+                    <label>&nbsp;</label>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-success" id="btnTambahStok"><i class="fas fa-plus"></i> Tambah Stok (In)</button>
+                        <button class="btn btn-warning" id="btnKurangStok"><i class="fas fa-minus"></i> Kurangi Stok (Out)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 3: Riwayat Transaksi -->
+    <div id="tab-history" class="tab-content">
+        <div class="card">
+            <div class="filter-area">
+                <h3><i class="fas fa-history"></i> 📜 Riwayat In/Out</h3>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchHistory" placeholder="Cari riwayat...">
+                </div>
+                <button id="btnClearHistory" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Hapus Riwayat</button>
+            </div>
+            <div class="table-wrapper">
+                <table id="historyTable">
+                    <thead>
+                        <tr><th>Tanggal</th><th>Barang</th><th>Jenis</th><th>Jumlah</th><th>Stok Akhir</th><th>Keterangan</th></tr>
+                    </thead>
+                    <tbody id="historyBody">
+                        <tr class="empty-row"><td colspan="6">Belum ada riwayat transaksi</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABEL UTAMA: Semua Stok -->
+    <div class="card">
+        <div class="filter-area">
+            <h3><i class="fas fa-clipboard-list"></i> 📋 Semua Stok</h3>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Cari barang...">
+            </div>
+        </div>
+        
+        <div class="status-filter-menu">
+            <button class="filter-btn active" data-filter="all"><i class="fas fa-list"></i> Semua</button>
+            <button class="filter-btn" data-filter="datang"><i class="fas fa-truck"></i> Datang <span class="filter-count" id="countDatang">0</span></button>
+            <button class="filter-btn" data-filter="gudang"><i class="fas fa-warehouse"></i> Di Gudang <span class="filter-count" id="countGudang">0</span></button>
+            <button class="filter-btn" data-filter="lowstock"><i class="fas fa-exclamation-triangle"></i> Stok Menipis</button>
+        </div>
+        
+        <div class="table-wrapper">
+            <table id="stockTable">
+                <thead>
+                    <tr><th>Nama Barang</th><th>Kode</th><th>Jumlah</th><th>Supplier</th><th>Tgl Datang</th><th>Status</th><th>Aksi</th></tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr class="empty-row"><td colspan="7">Belum ada data</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+            <button id="btnHapusSemua" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> Hapus Semua Data</button>
+            <div class="total-stok"><i class="fas fa-chart-line"></i> Total unit: <span id="totalJumlahSemua">0</span></div>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
